@@ -100,15 +100,16 @@
 
 <script type="text/template" id="item-template">
     <div class="view well">
-
+        <% if (hasWriteAccess) { %>
+        <button type="button" class="delete-btn close">×</button>
+        <% } %>
         <div class="meta">
             <% if (public) { %> <span class="label label-success">Public</span> <% } %>
             <% if (user) { %><span class="label label-primary"><%- username %></span><% } %>
             <span class="label label-info"><%- (new Date(updatedAt)).toLocaleTimeString() +' '+ (new Date(updatedAt)).toLocaleDateString() %></span>
         </div>
-
         <div class="ldquo">&ldquo;</div>
-        <div class="text"><%- text.replace(/\\n/g , '<br />') %></div>
+        <div class="text"><%- text.replace(/\\n/g , '<br/>') %></div>
     </div>
 </script>
 

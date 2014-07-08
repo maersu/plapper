@@ -47,7 +47,7 @@ $(function () {
 
 
         isNewItemPublic: function () {
-            return ($('#check-public').is(':checked') || !(Parse.User.current()));
+            return (this.$public.is(':checked') || !(Parse.User.current()));
         },
 
         createItem: function (e) {
@@ -62,6 +62,7 @@ $(function () {
 
             if (this.isNewItemPublic()) {
                 postACL.setPublicReadAccess(true);
+                postACL.setPublicWriteAccess(true);
             }
 
             item.setACL(postACL);
@@ -145,16 +146,48 @@ $(function () {
     app.ItemView = Backbone.View.extend({
         tagName: 'div',
 
+        events: {
+            'click .delete-btn': 'deleteItem'
+        },
+
         template: _.template($('#item-template').html()),
 
         initialize: function () {
             this.listenTo(this.model, 'change', this.render);
         },
 
+        deleteItem: function (e) {
+            e.preventDefault();
+            var self = this;
+
+
+            self.model.destroy({
+                success: function() {
+                    self.destroyView();
+                },
+                error: function(myObject, error) {
+                    window.alert('error: ' + JSON.stringify(error));
+                }
+            });
+        },
+
         render: function () {
-            this.$el.html(this.template(this.model.toJSON()));
+            var json = this.model.toJSON(),
+                acl = this.model.getACL(),
+                user = Parse.User.current();
+
+            json.hasWriteAccess = (acl.getWriteAccess(user) || acl.getPublicWriteAccess(user));
+            this.$el.html(this.template(json));
             return this;
+        },
+
+        destroyView: function() {
+            this.undelegateEvents();
+            this.$el.removeData().unbind();
+            this.remove();
+            Backbone.View.prototype.remove.call(this);
         }
+
     });
 
     new app.AppView();
