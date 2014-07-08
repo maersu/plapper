@@ -2,7 +2,7 @@
 
 ## Description
 
-This is an implementation simple text sharing and make use of the [Parse JavaScript API](http://parse.com).
+This is an implementation of a simple text sharing application and make use of the [Parse JavaScript API](http://parse.com).
 
 Live demo: http://plapper.parseapp.com/
 
