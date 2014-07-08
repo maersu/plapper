@@ -1,0 +1,161 @@
+/* global Parse, Backbone, _ */
+
+Parse.initialize('SaZoDUesEXubVcmPUX6YWsWTNIxhiNAeabhHM9eC', 'JPQJHefkbcfa3ceRpyxMHWrOYiW7alqwhEaXKKfg');
+
+var app = app || {};
+
+$(function () {
+    'use strict';
+
+    var Item = Parse.Object.extend('Item', {
+    });
+
+    var Items = Parse.Collection.extend({
+        model: Item
+    });
+    app.items = new Items();
+
+    app.AppView = Backbone.View.extend({
+
+        el: '#insertApp',
+        events: {
+            'click #btn-new-item': 'createItem',
+            'click #submit-btn': 'login',
+            'click #logout-btn': 'logout'
+        },
+
+        initialize: function () {
+            this.$input = this.$('#new-item');
+            this.$list = $('#item-list');
+            this.$username = $('#inputUsername');
+            this.$password = $('#inputPassword');
+            this.$public = $('#check-public');
+
+            this.listenTo(app.items, 'add', this.addOne);
+            this.listenTo(app.items, 'reset', this.addAll);
+            this.listenTo(app.items, 'all', this.render);
+
+            _.bindAll(this, 'createItem', 'login', 'logout');
+
+            var user = Parse.User.current();
+            if (user) {
+                this.loggedIn(user);
+            } else {
+                this.logout();
+            }
+        },
+
+
+        isNewItemPublic: function () {
+            return ($('#check-public').is(':checked') || !(Parse.User.current()));
+        },
+
+        createItem: function (e) {
+            e.preventDefault();
+
+            if (!this.$input.val().trim()) {
+                return;
+            }
+
+            var item = new Item(this.newAttributes());
+            var postACL = new Parse.ACL(Parse.User.current());
+
+            if (this.isNewItemPublic()) {
+                postACL.setPublicReadAccess(true);
+            }
+
+            item.setACL(postACL);
+            item.save();
+            app.items.add(item);
+
+            this.$input.val('');
+        },
+
+        logout: function () {
+            Parse.User.logOut();
+            $('.user').hide();
+            $('.no-user').show();
+            this.loadItems();
+        },
+
+        login: function (e) {
+            e.preventDefault();
+            var self = this;
+            var btn = $('#submit-btn');
+            btn.button('loading');
+
+            Parse.User.logIn(this.$username.val(), this.$password.val(), {
+                success: function (user) {
+                    self.$('.login-form .error').html('');
+                    self.loggedIn(user);
+                    btn.button('reset');
+                },
+                error: function () {
+                    self.$('.login-form .error').html('Invalid username or password. Please try again.').show();
+                    btn.button('reset');
+                }
+            });
+        },
+
+        loggedIn: function (user) {
+            $('#user-info-username').html(user.get('username'));
+            $('.no-user').hide();
+            $('.user').show();
+
+            this.loadItems();
+        },
+
+        loadItems: function () {
+            $('#item-list').html('');
+            app.items.fetch({reset: true});
+        },
+
+        newAttributes: function () {
+
+            var user = Parse.User.current(),
+                username;
+            if (user) {
+                username = user.get('username');
+            }
+
+            return {
+                text: this.$input.val(),
+                updatedAt: new Date(),
+                username: username,
+                user: user,
+                public: this.isNewItemPublic(),
+                ACL: {}
+            };
+        },
+
+        addOne: function (item) {
+            var view = new app.ItemView({
+                model: item
+            });
+            this.$list.prepend(view.render().el);
+        },
+
+        addAll: function () {
+            this.$list.html('');
+            app.items.each(this.addOne, this);
+        }
+
+    });
+
+    app.ItemView = Backbone.View.extend({
+        tagName: 'div',
+
+        template: _.template($('#item-template').html()),
+
+        initialize: function () {
+            this.listenTo(this.model, 'change', this.render);
+        },
+
+        render: function () {
+            this.$el.html(this.template(this.model.toJSON()));
+            return this;
+        }
+    });
+
+    new app.AppView();
+});
