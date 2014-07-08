@@ -1,20 +1,40 @@
-Project to test javascript api of parse.com
+# Plapper
 
-Live demo:
-http://plapper.parseapp.com/
+## Description
+
+This is an implementation simple text sharing and make use of the [Parse JavaScript API](http://parse.com).
+
+Live demo: http://plapper.parseapp.com/
+
+## Sample Accounts
+
+username: max
+password: test
+
+username: moritz
+password: test
+
+## Commands
 
 install:
-$ bower install
+  bower install
 
 Start a local server:
-$ grunt serve
+  grunt serve
 
 Build:
-$ grunt
+  grunt
 
 Deploy:
-$ grunt deploy
+  grunt deploy
 
-Links:
+
+## Tools
+
 * https://www.parse.com/docs/js_guide#javascript_guide
 * http://yeoman.io/
+
+
+## License
+
+[The Unlicense](unlicense.org) (i.e Public Domain)
