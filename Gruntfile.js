@@ -420,6 +420,10 @@ module.exports = function (grunt) {
         ]);
     });
 
+    grunt.registerTask('put', 'deploy to parse.com', function () {
+        grunt.task.run(['shell']);
+    });
+
     grunt.registerTask('deploy', 'build and deploy to parse.com', function () {
         grunt.task.run(['default', 'shell']);
     });

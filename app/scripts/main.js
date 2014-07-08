@@ -45,7 +45,6 @@ $(function () {
             }
         },
 
-
         isNewItemPublic: function () {
             return (this.$public.is(':checked') || !(Parse.User.current()));
         },
@@ -58,11 +57,14 @@ $(function () {
             }
 
             var item = new Item(this.newAttributes());
-            var postACL = new Parse.ACL(Parse.User.current());
+            var user =  Parse.User.current();
+            var postACL = new Parse.ACL(user);
 
             if (this.isNewItemPublic()) {
                 postACL.setPublicReadAccess(true);
-                postACL.setPublicWriteAccess(true);
+                if (!user) {
+                    postACL.setPublicWriteAccess(true);
+                }
             }
 
             item.setACL(postACL);
@@ -162,10 +164,10 @@ $(function () {
 
 
             self.model.destroy({
-                success: function() {
+                success: function () {
                     self.destroyView();
                 },
-                error: function(myObject, error) {
+                error: function (myObject, error) {
                     window.alert('error: ' + JSON.stringify(error));
                 }
             });
@@ -181,7 +183,7 @@ $(function () {
             return this;
         },
 
-        destroyView: function() {
+        destroyView: function () {
             this.undelegateEvents();
             this.$el.removeData().unbind();
             this.remove();
