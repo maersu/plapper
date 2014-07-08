@@ -18,8 +18,10 @@
 </head>
 <body>
 <!--[if lt IE 10]>
-<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
-    your browser</a> to improve your experience.</p>
+<div class="alert alert-dismissable alert-warning">
+    You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+    your browser</a> to improve your experience.
+</div>
 <![endif]-->
 
 
@@ -39,31 +41,17 @@
 
                     <ul class="nav navbar-nav navbar-right">
                         <li class="dropdown no-user">
-                            <div class="form-inline login-form no-user" role="form">
-                                <div class="form-group">
-                                    <label class="sr-only" for="inputUsername">Email address</label>
-                                    <input class="form-control" id="inputUsername" placeholder="Enter username">
-                                </div>
-                                <div class="form-group">
-                                    <label class="sr-only" for="inputPassword">Password</label>
-                                    <input type="password" class="form-control" id="inputPassword"
-                                           placeholder="Password">
-                                </div>
-                                <button data-loading-text="Sign in..." type="submit" class="btn btn-default"
-                                        id="submit-btn">Sign in
-                                </button>
-                                <div class="error"></div>
-                            </div>
+                            <a href="#" data-toggle="modal"
+                               data-target="#modal-register">Register</a></li>
+                        <li class="dropdown no-user">
+                            <a href="#" data-toggle="modal"
+                               data-target="#modal-login">Login</a></li>
                         </li>
-                        <li class="dropdown user">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download"><span
-                                    id="user-info-username"></span> <span class="caret"></span></a>
-                            <ul class="dropdown-menu" aria-labelledby="download">
-                                <li><a href="#" id="logout-btn">Logout</a></li>
-                            </ul>
+                        <li class="user">
+                            <a href="#" ><span id="user-info-username"></span></a>
                         </li>
+                        <li class="user"><a href="#" id="logout-btn">Logout</a></li>
                     </ul>
-
                 </div>
             </div>
         </div>
@@ -78,22 +66,117 @@
         <div class="user">
             <div class="checkbox alert alert-success">
                 <label>
-                    <input type="checkbox" name="public" value="public" id="check-public"> Public
+                    <input type="checkbox" checked name="public" value="public" id="check-public"> Public
                 </label>
             </div>
         </div>
 
         <p>
-            <a href="#" class="btn btn-primary btn-lg" id="btn-new-item" data-loading-text="sharing ...">Share</a>
+            <a href="#" class="btn btn-primary btn-lg" id="btn-new-item" data-loading-text="Share ...">Share</a>
         </p>
 
     </div>
 
     <div>
         <div id="item-list">
-            loading ...
         </div>
     </div>
+
+    <div class="modal fade" id="modal-register" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span
+                            aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Register</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-inline register-form" role="form">
+                        <div class="form-group">
+                            <label class="sr-only" for="registerUsername">Email address</label>
+                            <input class="form-control" id="registerUsername" placeholder="Enter username">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="registerPassword">Password</label>
+                            <input type="password" class="form-control" id="registerPassword"
+                                   placeholder="Password">
+                        </div>
+                    </div>
+                    <div class="error"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button data-loading-text="Sign in..." type="submit" class="btn btn-primary"
+                            id="register-btn">Register
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-login" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span
+                            aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Login</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-inline login-form" role="form">
+                        <div class="form-group">
+                            <label class="sr-only" for="inputUsername">Email address</label>
+                            <input class="form-control" id="inputUsername" placeholder="Enter username">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="inputPassword">Password</label>
+                            <input type="password" class="form-control" id="inputPassword"
+                                   placeholder="Password">
+                        </div>
+                    </div>
+                    <div class="error"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button data-loading-text="Sign in..." type="submit" class="btn btn-primary"
+                            id="login-btn">Sign in
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-error" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span
+                            aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Error</h4>
+                </div>
+                <div class="modal-body alert alert-dismissable alert-danger">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="pull-right"><a href="#top">Back to top</a></div>
+                <div>Code released under the <a href="http://unlicense.org">The Unlicense</a>.
+                    Fork on <a href="https://github.com/maersu/plapper">GitHub</a>.
+                </div>
+            </div>
+        </div>
+
+    </footer>
 
 </div>
 
@@ -109,7 +192,9 @@
             <span class="label label-info"><%- (new Date(updatedAt)).toLocaleTimeString() +' '+ (new Date(updatedAt)).toLocaleDateString() %></span>
         </div>
         <div class="ldquo">&ldquo;</div>
-        <div class="text"><%- text.replace(/\\n/g , '<br/>') %></div>
+        <div class="text"
+        <% if (hasWriteAccess) { %>contenteditable="true"<% } %>><%- text.replace(/\\n/g , '<br/>') %>
+    </div>
     </div>
 </script>
 

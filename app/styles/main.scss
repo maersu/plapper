@@ -1,27 +1,31 @@
-.browsehappy {
-  margin: 0.2em 0;
-  background: #ccc;
-  color: #000;
-  padding: 0.2em 0;
-}
-
-/* Space out content a bit */
 body {
-  padding-top: 70px;
+  padding: 70px 0 20px 0;
 }
 
 .user, .no-user {
   display: none;
 }
 
-.login-form {
-  padding: 5px;
-  margin-right: 10px;
+.error {
+  .alert {
+    margin: 10px 0;
+  }
+}
+
+.form-group {
+  margin-right: 5px;
 }
 
 #new-item {
   width: 100%;
   height: 100px;
+}
+
+#modal-error {
+  .alert {
+    margin: 0;
+    text-transform:capitalize;
+  }
 }
 
 .container-fluid {
@@ -51,8 +55,4 @@ body {
   display: inline-block;
   width: 96%;
   white-space: pre-wrap;
-}
-
-.form-group {
-  margin-left: 3px;
 }

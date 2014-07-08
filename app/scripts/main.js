@@ -4,8 +4,14 @@ Parse.initialize('SaZoDUesEXubVcmPUX6YWsWTNIxhiNAeabhHM9eC', 'JPQJHefkbcfa3ceRpy
 
 var app = app || {};
 
+
 $(function () {
     'use strict';
+
+    var showError = function (msg) {
+        $('#modal-error .modal-body').html(msg);
+        $('#modal-error').modal('show');
+    };
 
     var Item = Parse.Object.extend('Item', {
     });
@@ -20,22 +26,21 @@ $(function () {
         el: '#insertApp',
         events: {
             'click #btn-new-item': 'createItem',
-            'click #submit-btn': 'login',
+            'click #login-btn': 'login',
+            'click #register-btn': 'register',
             'click #logout-btn': 'logout'
         },
 
         initialize: function () {
             this.$input = this.$('#new-item');
             this.$list = $('#item-list');
-            this.$username = $('#inputUsername');
-            this.$password = $('#inputPassword');
             this.$public = $('#check-public');
 
             this.listenTo(app.items, 'add', this.addOne);
             this.listenTo(app.items, 'reset', this.addAll);
             this.listenTo(app.items, 'all', this.render);
 
-            _.bindAll(this, 'createItem', 'login', 'logout');
+            _.bindAll(this, 'createItem', 'login', 'logout', 'createSuccess', 'createError');
 
             var user = Parse.User.current();
             if (user) {
@@ -55,9 +60,9 @@ $(function () {
             if (!this.$input.val().trim()) {
                 return;
             }
-
+            $('#btn-new-item').button('loading');
             var item = new Item(this.newAttributes());
-            var user =  Parse.User.current();
+            var user = Parse.User.current();
             var postACL = new Parse.ACL(user);
 
             if (this.isNewItemPublic()) {
@@ -68,10 +73,19 @@ $(function () {
             }
 
             item.setACL(postACL);
-            item.save();
+            item.save({success: this.createSuccess, error: this.createError});
             app.items.add(item);
 
             this.$input.val('');
+        },
+
+        createSuccess: function () {
+            $('#btn-new-item').button('reset');
+        },
+
+        createError: function (object, error) {
+            $('#btn-new-item').button('reset');
+            showError(error.message);
         },
 
         logout: function () {
@@ -81,20 +95,44 @@ $(function () {
             this.loadItems();
         },
 
+        register: function (e) {
+            e.preventDefault();
+            var self = this;
+            var btn = $('#register-btn');
+            btn.button('loading');
+
+            var user = new Parse.User();
+            user.set('username', $('#registerUsername').val());
+            user.set('password', $('#registerPassword').val());
+
+            user.signUp(null, {
+                success: function (user) {
+                    btn.button('reset');
+                    self.loggedIn(user);
+                    $('#modal-register').modal('hide');
+                },
+                error: function (user, error) {
+                    showError(error.message);
+                    btn.button('reset');
+                }
+            });
+        },
+
         login: function (e) {
             e.preventDefault();
             var self = this;
-            var btn = $('#submit-btn');
+            var btn = $('#login-btn');
             btn.button('loading');
 
-            Parse.User.logIn(this.$username.val(), this.$password.val(), {
+            Parse.User.logIn($('#inputUsername').val(), $('#inputPassword').val(), {
                 success: function (user) {
                     self.$('.login-form .error').html('');
                     self.loggedIn(user);
                     btn.button('reset');
+                    $('#modal-login').modal('hide');
                 },
-                error: function () {
-                    self.$('.login-form .error').html('Invalid username or password. Please try again.').show();
+                error: function (user, error) {
+                    showError(error.message);
                     btn.button('reset');
                 }
             });
@@ -149,7 +187,8 @@ $(function () {
         tagName: 'div',
 
         events: {
-            'click .delete-btn': 'deleteItem'
+            'click .delete-btn': 'deleteItem',
+            'blur .text': 'changeText'
         },
 
         template: _.template($('#item-template').html()),
@@ -167,10 +206,17 @@ $(function () {
                 success: function () {
                     self.destroyView();
                 },
-                error: function (myObject, error) {
-                    window.alert('error: ' + JSON.stringify(error));
+                error: function (object, error) {
+                    showError(error.message);
                 }
             });
+        },
+
+        changeText: function () {
+            this.model.set('text', this.$el.find('.text').html());
+            this.model.save({error: function (object, error) {
+                showError(error.message);
+            }});
         },
 
         render: function () {
